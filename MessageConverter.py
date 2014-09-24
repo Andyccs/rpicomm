@@ -21,3 +21,17 @@ class PCToArduino:
 			outgoingMessage = '0'
 		m = model.MessageModel(model.MessageModel.ARDUINO, outgoingMessage)
 		return m
+
+class ArduinoToPC:
+	@staticmethod
+	def convert(serialInput):
+        information = serialInput.split(',');
+        status = information[0]
+        if(status=='1'):
+            status = 'TASK_FINISH'
+
+        sensors = ','.join(information.pop(0))
+
+        jsonString = '{"event":'+status+',"sensors":['+sensors+']}'
+
+        return jsonString

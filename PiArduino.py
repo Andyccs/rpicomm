@@ -40,21 +40,6 @@ class PiArduino:
         try:
             sensor = self.ser.readline().rstrip()
             logging.debug('Arduino Received: '+str(sensor))
-
-            # TODO please move this part back to main program
-            # decoding
-            # "status":...,"sensor":...
-            # information = sensor.split(',');
-            # status = information[0]
-            # if(status=='1'):
-            #     status = 'TASK_FINISH'
-
-            # sensors = ','.join(information.pop(0))
-
-            # jsonString = '{"event":'+status+',"sensors":['+sensors+']}'
-
-            # return jsonString
-            
             return sensor
         finally:
             self.mutex.release()
