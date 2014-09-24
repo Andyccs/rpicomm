@@ -25,13 +25,13 @@ class PCToArduino:
 class ArduinoToPC:
 	@staticmethod
 	def convert(serialInput):
-        information = serialInput.split(',');
-        status = information[0]
-        if(status=='1'):
-            status = 'TASK_FINISH'
+		information = serialInput.split(',');
+		status = information[0]
+		if(status=='1'):
+			status = 'TASK_FINISH'
 
-        sensors = ','.join(information.pop(0))
+		sensors = ','.join(information.pop(0))
 
-        jsonString = '{"event":'+status+',"sensors":['+sensors+']}'
+		jsonString = '{"event":'+status+',"sensors":['+sensors+']}'
 
-        return jsonString
+		return jsonString

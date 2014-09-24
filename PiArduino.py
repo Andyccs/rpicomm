@@ -13,7 +13,7 @@ class PiArduino:
     def connect(self):
         self.mutex.acquire()
         try:
-            self.ser = serial.Serial('/dev/ttyACM0', 9600) #ttyACM1
+            self.ser = serial.Serial('/dev/ttyACM0', 9600,timeout=0) #ttyACM1
             self.isConnected = True
             logging.info('Arduino Connected')
         finally:

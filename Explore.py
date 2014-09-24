@@ -6,7 +6,7 @@ import jsonpickle
 import socket
 import OutGoingMessageModel as model
 import time
-from MessageConverter import PCToArduino
+from MessageConverter import PCToArduino, ArduinoToPC
 # import PiArduino
 # import PiBluetooth
 
@@ -20,7 +20,7 @@ incomingMessageQueue = Queue.Queue()
 outgoingMessageQueue = Queue.Queue()
 
 wifi = PiWifi.PiWifi("localhost",8080)
-
+# arduino = PiArduino.PiArduino()
 
 ########################################################33
 class wifiThread (threading.Thread):
@@ -41,11 +41,38 @@ class wifiThread (threading.Thread):
 					logging.log(5,'receiving from wifi end')
 
 					receiveDict = jsonpickle.decode(receive_string)
+
+					#put with blocking=True
 					incomingMessageQueue.put(receiveDict, True)
 			except socket.error as msg:
 				logging.error('connecting to wifi failed, retrying')
 			except ValueError as msg:
 				logging.error(msg)
+
+class arduinoThread(threading.Thread):
+	def __init__(self):
+		threading.Thread.__init__(self)
+
+	def run(self):
+		while(True):
+			try:
+				arduino.connect()
+				while(True):
+					logging.log(5,'receiving from arduino')
+					receive_string = arduino.receive()
+					while(receive_string == ''):
+						logging.log(5,'give up receiving from arduino')
+						time.sleep(0.5)
+						receive_string = wifi.receive()
+					logging.log(5,'receiving from arduino end')
+
+					jsonString = ArduinoToPC.convert(receive_string)
+
+					#put with blocking=True
+					incomingMessageQueue.put(jsonString, True)
+
+			except Serial.SerialException:
+				logging.error('connecting to arduino failed, retrying')
 
 class incomingMessageConsumerThread(threading.Thread):
 	def __init__(self):
