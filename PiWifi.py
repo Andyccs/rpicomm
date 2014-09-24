@@ -42,6 +42,8 @@ class PiWifi:
 			(self.conn, self.addr) = self.socket.accept()
 			logging.info('Connected with:' + self.addr[0] + ':' + str(self.addr[1]) )
 
+			self.conn.setblocking(False)
+
 			self.isConnected = True
 		finally:
 			self.mutex.release()
@@ -96,5 +98,8 @@ class PiWifi:
 
 			logging.debug('Receiving data: '+result)
 			return result.decode('utf-8')
+		except socket.error as msg:
+			logging.log(5,'Non-blocking receive')
+			return ''
 		finally:
 			self.mutex.release()
