@@ -6,9 +6,9 @@ import PiWifi
 # import PiBluetooth
 import jsonpickle
 import socket
-import serial
-import bluetooth
-import OutGoingMessageModel as model
+# import serial
+# import bluetooth
+import MessageModel as model
 import time
 from MessageConverter import PCToArduino, ArduinoToPC
 
@@ -110,44 +110,48 @@ class incomingMessageConsumerThread(threading.Thread):
 
 	def run(self):
 		while(True):
-			incomingMessage = incomingMessageQueue.get(True)
-			logging.debug('consuming incoming message: '+str(incomingMessage))
+			try:
+				incomingMessage = incomingMessageQueue.get(True)
+				logging.debug('consuming incoming message: '+str(incomingMessage))
 
-			event = incomingMessage['event']
-			
-			# this event came from PC
-			# need to send appropriate string to arduino
-			# 0: Move forward 0 unit
-			# 1: Move forward 1 unit
-			# L: Turn left
-			# R: Turn right
-			if event == 'ACTION':
-				outgoingMessageQueue.put(PCToArduino.convert(incomingMessage))
+				event = incomingMessage['event']
+				
+				# this event came from PC
+				# need to send appropriate string to arduino
+				# 0: Move forward 0 unit
+				# 1: Move forward 1 unit
+				# L: Turn left
+				# R: Turn right
+				if event == 'ACTION':
+					outgoingMessageQueue.put(PCToArduino.convert(incomingMessage))
 
-			# this event came from Arduino
-			# need to send appropriate string to PC
-			elif event == 'TASK_FINISH':
-				self.__forwardMessage(incomingMessage, model.MessageModel.PC)
+				# this event came from Arduino
+				# need to send appropriate string to PC
+				elif event == 'TASK_FINISH':
+					self.__forwardMessage(incomingMessage, model.OutGoing.PC)
 
-			# these events are came from ANDROID
-			# just forward them to PC
-			elif event == 'EXPLORE' or event == 'START':
-				self.__forwardMessage(incomingMessage, model.MessageModel.PC)
+				# these events are came from ANDROID
+				# just forward them to PC
+				elif event == 'EXPLORE' or event == 'START':
+					self.__forwardMessage(incomingMessage, model.OutGoing.PC)
 
-			# this event came from ANDROID
-			# need to send latest map info to PC
-			elif event == 'GET_MAP':
-				self.__forwardMessage(incomingMessage, model.MessageModel.PC)
+				# this event came from ANDROID
+				# need to send latest map info to PC
+				elif event == 'GET_MAP':
+					self.__forwardMessage(incomingMessage, model.OutGoing.PC)
 
-			# this event came from PC
-			# need to forward to ANDROID
-			elif event == 'MAP':
-				self.__forwardMessage(incomingMessage, model.MessageModel.ANDROID)
+				# this event came from PC
+				# need to forward to ANDROID
+				elif event == 'MAP':
+					self.__forwardMessage(incomingMessage, model.OutGoing.ANDROID)
 
-			incomingMessageQueue.task_done()
+				incomingMessageQueue.task_done()
+			except BaseException as msg:
+				logging.error(msg)	
+
 	def __forwardMessage(self, incomingMessage, to):
 		outgoingMessage = jsonpickle.encode(incomingMessage, unpicklable=False)
-		m = model.MessageModel(to, outgoingMessage)
+		m = model.OutGoing(to, outgoingMessage)
 		outgoingMessageQueue.put(m)
 
 class outgoingMessageConsumerThread(threading.Thread):
@@ -156,24 +160,28 @@ class outgoingMessageConsumerThread(threading.Thread):
 
 	def run(self):
 		while(True):
-			outgoingMessage = outgoingMessageQueue.get(True)
-			logging.debug('consuming outgoing message: '+str(outgoingMessage))
+			try:
+				outgoingMessage = outgoingMessageQueue.get(True)
+				logging.debug('consuming outgoing message: '+str(outgoingMessage))
 
-			if outgoingMessage.to == model.MessageModel.PC :
-				logging.log(5,'sending to pc through wifi')
-				wifi.send(outgoingMessage.message)
-				logging.log(5,'after sending to pc through wifi')
-			elif outgoingMessage.to == model.MessageModel.ANDROID :
-				logging.log(5,'sending to android through bluetooth')
-				bluetooth.send(outgoingMessage.message)
-				logging.log(5,'after sending to android through bluetooth')
-			elif outgoingMessage.to == model.MessageModel.ARDUINO :
-				logging.log(5,'sending to arduino through serial')
-				arduino.send(outgoingMessage.message)
-				logging.log(5,'after sending to arduino through serial')
-				pass
+				if outgoingMessage.to == model.OutGoing.PC :
+					logging.log(5,'sending to pc through wifi')
+					wifi.send(outgoingMessage.message)
+					logging.log(5,'after sending to pc through wifi')
+				elif outgoingMessage.to == model.OutGoing.ANDROID :
+					logging.log(5,'sending to android through bluetooth')
+					bluetooth.send(outgoingMessage.message)
+					logging.log(5,'after sending to android through bluetooth')
+				elif outgoingMessage.to == model.OutGoing.ARDUINO :
+					logging.log(5,'sending to arduino through serial')
+					arduino.send(outgoingMessage.message)
+					logging.log(5,'after sending to arduino through serial')
+					pass
 
-			outgoingMessageQueue.task_done()
+				outgoingMessageQueue.task_done()
+			except BaseException as msg:
+				logging.error(msg)	
+
 
 
 ###################################################

@@ -1,4 +1,4 @@
-class MessageModel():
+class OutGoing():
 	ARDUINO = "arduino"
 	ANDROID = "android"
 	PC = "PC"
