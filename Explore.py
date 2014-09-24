@@ -2,13 +2,16 @@ import Queue
 import logging
 import threading
 import PiWifi
+# import PiArduino
+# import PiBluetooth
 import jsonpickle
 import socket
+import serial
+import bluetooth
 import OutGoingMessageModel as model
 import time
 from MessageConverter import PCToArduino, ArduinoToPC
-# import PiArduino
-# import PiBluetooth
+
 
 FORMAT = '%(asctime)-15s %(message)s'
 LEVEL = logging.DEBUG
@@ -21,6 +24,7 @@ outgoingMessageQueue = Queue.Queue()
 
 wifi = PiWifi.PiWifi("localhost",8080)
 # arduino = PiArduino.PiArduino()
+# bluetooth = PiBluetooth.PiBluetooth()
 
 ########################################################33
 class wifiThread (threading.Thread):
@@ -71,8 +75,34 @@ class arduinoThread(threading.Thread):
 					#put with blocking=True
 					incomingMessageQueue.put(jsonString, True)
 
-			except Serial.SerialException:
+			except serial.SerialException:
 				logging.error('connecting to arduino failed, retrying')
+
+class bluetoothThread (threading.Thread):
+	def __init__(self):
+		threading.Thread.__init__(self)
+
+	def run(self):
+		while(True):
+			try:
+				bluetooth.connect()
+				while(True):
+					logging.log(5,'receiving from bluetooth')
+					receive_string = bluetooth.receive()
+					while(receive_string == ''):
+						logging.log(5,'give up receiving from bluetooth')
+						time.sleep(0.5)
+						receive_string = bluetooth.receive()
+					logging.log(5,'receiving from bluetooth end')
+
+					receiveDict = jsonpickle.decode(receive_string)
+
+					#put with blocking=True
+					incomingMessageQueue.put(receiveDict, True)
+			except bluetooth.BluetoothError:
+				logging.error('connecting to bluetooth failed, retrying')
+			except ValueError as msg:
+				logging.error(msg)
 
 class incomingMessageConsumerThread(threading.Thread):
 	def __init__(self):
@@ -149,9 +179,15 @@ class outgoingMessageConsumerThread(threading.Thread):
 ###################################################
 
 wifiThread = wifiThread()
+# arduino = arduinoThread()
+# bluetooth = bluetoothThread()
+
 incomingMessageConsumerThread = incomingMessageConsumerThread()
 outgoingMessageConsumerThread = outgoingMessageConsumerThread()
 
 wifiThread.start()
+# arduino.start()
+# bluetooth.start()
+
 incomingMessageConsumerThread.start()
 outgoingMessageConsumerThread.start()
