@@ -87,8 +87,14 @@ class PiWifi:
 				logging.warning('No connection, abort receiving data')
 				return None
 
-			data = self.conn.recv(1024)
-			logging.debug('Receiving data: '+data)
-			return data.decode('utf-8')
+			result = ""
+			data = self.conn.recv(1)
+			result += data
+			while(data!='}'):
+				data = self.conn.recv(1)
+				result += data
+
+			logging.debug('Receiving data: '+result)
+			return result.decode('utf-8')
 		finally:
 			self.mutex.release()
