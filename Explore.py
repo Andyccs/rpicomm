@@ -132,11 +132,15 @@ class outgoingMessageConsumerThread(threading.Thread):
 			if outgoingMessage.to == model.MessageModel.PC :
 				logging.log(5,'sending to pc through wifi')
 				wifi.send(outgoingMessage.message)
-				logging.log(5,'after sending')
-				pass
+				logging.log(5,'after sending to pc through wifi')
 			elif outgoingMessage.to == model.MessageModel.ANDROID :
-				pass
+				logging.log(5,'sending to android through bluetooth')
+				bluetooth.send(outgoingMessage.message)
+				logging.log(5,'after sending to android through bluetooth')
 			elif outgoingMessage.to == model.MessageModel.ARDUINO :
+				logging.log(5,'sending to arduino through serial')
+				arduino.send(outgoingMessage.message)
+				logging.log(5,'after sending to arduino through serial')
 				pass
 
 			outgoingMessageQueue.task_done()
