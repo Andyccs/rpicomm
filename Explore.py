@@ -6,6 +6,7 @@ import jsonpickle
 import socket
 import OutGoingMessageModel as model
 import time
+from MessageConverter import PCToArduino
 # import PiArduino
 # import PiBluetooth
 
@@ -64,51 +65,27 @@ class incomingMessageConsumerThread(threading.Thread):
 			# L: Turn left
 			# R: Turn right
 			if event == 'ACTION':
-				outgoingMessage = ""
-				if incomingMessage['action']=='GO' :
-					if incomingMessage['quantity']==0 :
-						outgoingMessage = '0'
-					else:
-						outgoingMessage = '1'
-				elif incomingMessage['action']=='ROTATE' :
-					if incomingMessage['quantity'] > 0 : 
-						outgoingMessage = 'L'
-					elif incomingMessage['quantity'] < 0 :
-						outgoingMessage = 'R'
-					else:
-						outgoingMessage = '0'
-				else:
-					logging.debug('incoming message contains unknown action, sending move 0')
-					outgoingMessage = '0'
-				m = model.MessageModel(model.MessageModel.ARDUINO, outgoingMessage)
-				outgoingMessageQueue.put(m)
-				pass
+				outgoingMessageQueue.put(PCToArduino.convert(incomingMessage))
 
 			# this event came from Arduino
 			# need to send appropriate string to PC
 			elif event == 'TASK_FINISH':
 				self.__forwardMessage(incomingMessage, model.MessageModel.PC)
-				pass
 
 			# these events are came from ANDROID
 			# just forward them to PC
 			elif event == 'EXPLORE' or event == 'START':
 				self.__forwardMessage(incomingMessage, model.MessageModel.PC)
-				# outgoingMessage = jsonpickle.encode(incomingMessage, unpicklable=False)
-				# m = model.MessageModel(model.MessageModel.PC, outgoingMessage)
-				# outgoingMessageQueue.put(m)
 
 			# this event came from ANDROID
 			# need to send latest map info to PC
 			elif event == 'GET_MAP':
 				self.__forwardMessage(incomingMessage, model.MessageModel.PC)
-				pass
 
 			# this event came from PC
 			# need to forward to ANDROID
 			elif event == 'MAP':
 				self.__forwardMessage(incomingMessage, model.MessageModel.ANDROID)
-				pass
 
 			incomingMessageQueue.task_done()
 	def __forwardMessage(self, incomingMessage, to):
