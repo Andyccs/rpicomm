@@ -1,0 +1,60 @@
+import unittest
+import logging
+import PiBluetooth
+import thread
+import time
+from bluetooth import *
+
+FORMAT = '%(asctime)-15s %(message)s'
+LEVEL = logging.DEBUG
+
+logging.basicConfig(level=LEVEL,format=FORMAT)
+
+class TestPiBluetooth(unittest.TestCase):
+
+	bt1 = None
+	bt2 = None
+
+	@classmethod
+	def setUpClass(cls):
+		cls.bt1 = PiBluetooth.PiBluetooth(4)
+		cls.bt2 = PiBluetooth.PiBluetooth(4)
+		
+		#start new thread and execute connect from PiBluetooth
+		thread.start_new_thread(cls.bt1.connect,())
+	
+	def test_precondition(self):
+		#set delay
+		time.sleep(2)
+		#check if connected = true
+		self.assertTrue(TestPiBluetooth.bt1.isConnected)
+		
+	def test_send_data(self):
+		test_string = "bt send test data"
+		TestPiBluetooth.bt1.send(test_string)
+		time.sleep(2)
+		
+		#get any available data is what recv(1024) for
+		receive_string = TestPiBluetooth.bt2.recv(1024)
+		
+		#check if both are same
+		self.assertEqual("bt send test data",receive_string)
+		
+	def test_receive_data(self):
+		test_string = "received data"
+		TestPiBluetooth.bt2.send(test_string.encode('utf-8'))
+		
+		time.sleep(2)
+		receive_string = TestPiBluetooth.bt1.receive()
+		self.assertEqual("received data", receive_string)
+		
+	@classmethod
+	def tearDownClass(cls):
+		if(cls.bt1.isConnected):
+			cls.bt1.close()
+
+if __name__ == "__main__":
+	unittest.main()
+		
+		
+		
