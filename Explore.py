@@ -78,31 +78,31 @@ class arduinoThread(threading.Thread):
 			except serial.SerialException:
 				logging.error('connecting to arduino failed, retrying')
 
-class bluetoothThread (threading.Thread):
-	def __init__(self):
-		threading.Thread.__init__(self)
+# class bluetoothThread (threading.Thread):
+# 	def __init__(self):
+# 		threading.Thread.__init__(self)
 
-	def run(self):
-		while(True):
-			try:
-				bluetooth.connect()
-				while(True):
-					logging.log(5,'receiving from bluetooth')
-					receive_string = bluetooth.receive()
-					while(receive_string == ''):
-						logging.log(5,'give up receiving from bluetooth')
-						time.sleep(0.5)
-						receive_string = bluetooth.receive()
-					logging.log(5,'receiving from bluetooth end')
+# 	def run(self):
+# 		while(True):
+# 			try:
+# 				bluetooth.connect()
+# 				while(True):
+# 					logging.log(5,'receiving from bluetooth')
+# 					receive_string = bluetooth.receive()
+# 					while(receive_string == ''):
+# 						logging.log(5,'give up receiving from bluetooth')
+# 						time.sleep(0.5)
+# 						receive_string = bluetooth.receive()
+# 					logging.log(5,'receiving from bluetooth end')
 
-					receiveDict = jsonpickle.decode(receive_string)
+# 					receiveDict = jsonpickle.decode(receive_string)
 
-					#put with blocking=True
-					incomingMessageQueue.put(receiveDict, True)
-			except bluetooth.BluetoothError:
-				logging.error('connecting to bluetooth failed, retrying')
-			except ValueError as msg:
-				logging.error(msg)
+# 					#put with blocking=True
+# 					incomingMessageQueue.put(receiveDict, True)
+# 			except bluetooth.BluetoothError:
+# 				logging.error('connecting to bluetooth failed, retrying')
+# 			except ValueError as msg:
+# 				logging.error(msg)
 
 class incomingMessageConsumerThread(threading.Thread):
 	def __init__(self):
