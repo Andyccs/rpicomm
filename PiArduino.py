@@ -22,7 +22,8 @@ class PiArduino:
     def close(self):
         self.mutex.acquire()
         try:
-            sel.ser.close()
+            # problem here
+            self.ser.close()
             self.isConnected = False
             logging.info('Arduino Disconnected')
         finally:
@@ -47,6 +48,10 @@ class PiArduino:
     def send(self,command):
         self.mutex.acquire()
         try:
+
+            # problem here
+            # SerialException('write failed: %s % (v, )')
+            # serial.serialutil.SerialExeption: write failed: [Errno 5] Input/output error
             self.ser.write(command)
             logging.debug('Arduino Sent: '+str(command))
         finally:

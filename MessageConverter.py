@@ -1,4 +1,4 @@
-import OutGoingMessageModel as model
+import MessageModel as model
 
 class PCToArduino:
 	@staticmethod
@@ -19,7 +19,7 @@ class PCToArduino:
 		else:
 			logging.debug('incoming message contains unknown action, sending move 0')
 			outgoingMessage = '0'
-		m = model.MessageModel(model.MessageModel.ARDUINO, outgoingMessage)
+		m = model.OutGoing(model.OutGoing.ARDUINO, outgoingMessage)
 		return m
 
 class ArduinoToPC:

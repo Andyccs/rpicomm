@@ -22,7 +22,7 @@ logging.basicConfig(level=LEVEL,format=FORMAT)
 incomingMessageQueue = Queue.Queue()
 outgoingMessageQueue = Queue.Queue()
 
-wifi = PiWifi.PiWifi("localhost",8080)
+wifi = PiWifi.PiWifi("192.168.14.144",8080)
 # arduino = PiArduino.PiArduino()
 # bluetooth = PiBluetooth.PiBluetooth()
 
