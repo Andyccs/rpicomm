@@ -187,15 +187,15 @@ class outgoingMessageConsumerThread(threading.Thread):
 ###################################################
 
 wifiThread = wifiThread()
-arduino = arduinoThread()
-# bluetooth = bluetoothThread()
+arduinoThread = arduinoThread()
+# bluetoothThread = bluetoothThread()
 
 incomingMessageConsumerThread = incomingMessageConsumerThread()
 outgoingMessageConsumerThread = outgoingMessageConsumerThread()
 
 wifiThread.start()
-arduino.start()
-# bluetooth.start()
+arduinoThread.start()
+# bluetoothThread.start()
 
 incomingMessageConsumerThread.start()
 outgoingMessageConsumerThread.start()
