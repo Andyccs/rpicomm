@@ -67,12 +67,12 @@ class arduinoThread(threading.Thread):
 					while(receive_string == ''):
 						logging.log(5,'give up receiving from arduino')
 						time.sleep(0.5)
-						receive_string = wifi.receive()
+						receive_string = arduino.receive()
 					logging.log(5,'receiving from arduino end')
 
-					logging.debug("Arduino thread receive: "+incomingMessage)
+					logging.log(5,"Arduino thread receive: "+receive_string)
 					jsonString = ArduinoToPC.convert(receive_string)
-					logging.debug("Arduino thread converted to json: "+jsonString)
+					logging.log(5,"Arduino thread converted to json: "+jsonString)
 
 					#put with blocking=True
 					incomingMessageQueue.put(jsonString, True)
