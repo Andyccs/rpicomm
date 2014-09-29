@@ -2,11 +2,11 @@ import Queue
 import logging
 import threading
 import PiWifi
-# import PiArduino
+import PiArduino
 # import PiBluetooth
 import jsonpickle
 import socket
-# import serial
+import serial
 # import bluetooth
 import MessageModel as model
 import time
@@ -23,7 +23,7 @@ incomingMessageQueue = Queue.Queue()
 outgoingMessageQueue = Queue.Queue()
 
 wifi = PiWifi.PiWifi("192.168.14.144",8080)
-# arduino = PiArduino.PiArduino()
+arduino = PiArduino.PiArduino()
 # bluetooth = PiBluetooth.PiBluetooth()
 
 ########################################################33
@@ -187,14 +187,14 @@ class outgoingMessageConsumerThread(threading.Thread):
 ###################################################
 
 wifiThread = wifiThread()
-# arduino = arduinoThread()
+arduino = arduinoThread()
 # bluetooth = bluetoothThread()
 
 incomingMessageConsumerThread = incomingMessageConsumerThread()
 outgoingMessageConsumerThread = outgoingMessageConsumerThread()
 
 wifiThread.start()
-# arduino.start()
+arduino.start()
 # bluetooth.start()
 
 incomingMessageConsumerThread.start()

@@ -13,6 +13,8 @@ class PiArduino:
     def connect(self):
         self.mutex.acquire()
         try:
+            #timeout=0 for non-blocking read
+            #since no writetimeout is specified, write is blocking
             self.ser = serial.Serial('/dev/ttyACM0', 9600,timeout=0) #ttyACM1
             self.isConnected = True
             logging.info('Arduino Connected')
