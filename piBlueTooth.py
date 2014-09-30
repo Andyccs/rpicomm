@@ -16,6 +16,7 @@ class piBlueTooth:
     def __init__(self):
 	
         self.server_sock = BluetoothSocket(RFCOMM)
+        self.server_sock.setblocking(False)
         self.server_sock.bind(("",addr))
         self.server_sock.listen(10)
 		
