@@ -103,6 +103,8 @@ class arduinoThread(threading.Thread):
 # 					incomingMessageQueue.put(receiveDict, True)
 # 			except bluetooth.BluetoothError:
 # 				logging.error('connecting to bluetooth failed, retrying')
+# 			except bluetooth.IOError:
+# 				logging.error('IOError occurred')
 # 			except ValueError as msg:
 # 				logging.error(msg)
 
