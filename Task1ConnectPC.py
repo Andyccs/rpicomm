@@ -12,7 +12,7 @@ LEVEL = logging.DEBUG
 logging.basicConfig(level=LEVEL,format=FORMAT)
 
 
-wifi = PiWifi.PiWifi("0.0.0.0",8000)
+wifi = PiWifi.PiWifi("192.168.14.144",8000)
 wifi.connect()
 
 assert wifi.connected()
