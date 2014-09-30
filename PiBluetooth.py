@@ -2,21 +2,21 @@ from bluetooth import *
 import logging
 
 class PiBlueTooth:
-	UUID = "00001101-0000-1000-8000-00805F9B34FB"
+	UUID = "a1513d56-2b38-421d-bee3-4286f12f9866"
 	ADDR = None
     
     def __init__(self, address):
     	PiBlueTooth.ADDR = address
 
     	self.server_sock = BluetoothSocket(RFCOMM)
-    	self.server_sock.bind(("",ADDR))
+    	self.server_sock.bind(("",address))
     	self.server_sock.listen(10)
 
     	self.port = self.server_sock.getsockname()[1]
 
     	advertise_service( self.server_sock, "SampleServer",
-                           service_id = PiBlueTooth.UUID,
-                           service_classes = [ PiBlueTooth.UUID, SERIAL_PORT_CLASS ],
+                           service_id = self.UUID,
+                           service_classes = [ self.UUID, SERIAL_PORT_CLASS ],
                            profiles = [ SERIAL_PORT_PROFILE ]
                         )
 
@@ -39,8 +39,9 @@ class PiBlueTooth:
 		if self.client_sock == None:
 			return None
 
-		try:
-			self.client_sock.send(str(data))
+		try:	
+			#self.client_sock.setblocking(1)
+			self.client_sock.send(str(data),socket.MSG_WAITALL)
 			logging.info('Bluetooth sent data')
 		except IOError:
 			logging.error('Bluetooth exception')
@@ -50,8 +51,9 @@ class PiBlueTooth:
 		if self.client_sock == None:
 			return None
 
-		try:
-			data = self.client_sock.recv(1024)
+		try:	
+			#self.client_sock.setblocking(0)
+			data = self.client_sock.recv(1024,socket.MSG_DONTWAIT)
 			if len(data)!=0:
 				logging.info('Bluetooth received data')
 				return data
