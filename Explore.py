@@ -24,7 +24,7 @@ outgoingMessageQueue = Queue.Queue()
 
 wifi = PiWifi.PiWifi("192.168.14.144",8080)
 arduino = PiArduino.PiArduino()
-bluetooth = PiBluetooth.PiBluetooth()
+bluetooth = PiBluetooth.PiBluetooth(4)
 
 ########################################################33
 class wifiThread (threading.Thread):
