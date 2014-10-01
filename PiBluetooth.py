@@ -4,25 +4,25 @@ import logging
 class PiBlueTooth:
 	UUID = "a1513d56-2b38-421d-bee3-4286f12f9866"
 	ADDR = None
-    
-    def __init__(self, address):
-    	PiBlueTooth.ADDR = address
 
-    	self.server_sock = BluetoothSocket(RFCOMM)
-    	self.server_sock.bind(("",address))
-    	self.server_sock.listen(10)
+	def __init__(self, address):
+		PiBlueTooth.ADDR = address
 
-    	self.port = self.server_sock.getsockname()[1]
+		self.server_sock = BluetoothSocket(RFCOMM)
+		self.server_sock.bind(("",address))
+		self.server_sock.listen(10)
 
-    	advertise_service( self.server_sock, "SampleServer",
-                           service_id = self.UUID,
-                           service_classes = [ self.UUID, SERIAL_PORT_CLASS ],
-                           profiles = [ SERIAL_PORT_PROFILE ]
-                        )
+		self.port = self.server_sock.getsockname()[1]
 
-    	self.client_sock = None
-    	self.client_info = None
-    	self.isConnected = False
+		advertise_service( self.server_sock, "SampleServer",
+							service_id = self.UUID,
+							service_classes = [ self.UUID, SERIAL_PORT_CLASS ],
+							profiles = [ SERIAL_PORT_PROFILE ]
+						)
+
+		self.client_sock = None
+		self.client_info = None
+		self.isConnected = False
 
 	def connect(self):
 		self.client_sock, self.client_info = self.server_sock.accept()
