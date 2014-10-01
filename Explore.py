@@ -3,11 +3,11 @@ import logging
 import threading
 import PiWifi
 import PiArduino
-# import PiBluetooth
+import PiBluetooth
 import jsonpickle
 import socket
 import serial
-# import bluetooth
+import bluetooth
 import MessageModel as model
 import time
 from MessageConverter import PCToArduino, ArduinoToPC
@@ -24,7 +24,7 @@ outgoingMessageQueue = Queue.Queue()
 
 wifi = PiWifi.PiWifi("192.168.14.144",8080)
 arduino = PiArduino.PiArduino()
-# bluetooth = PiBluetooth.PiBluetooth()
+bluetooth = PiBluetooth.PiBluetooth()
 
 ########################################################33
 class wifiThread (threading.Thread):
@@ -37,6 +37,8 @@ class wifiThread (threading.Thread):
 				wifi.connect()
 				while(True):
 					logging.log(5,'receiving from wifi')
+					
+
 					receive_string = wifi.receive()
 					while(receive_string == ''):
 						logging.log(5,'give up receiving from wifi')
@@ -80,33 +82,33 @@ class arduinoThread(threading.Thread):
 			except serial.SerialException:
 				logging.error('connecting to arduino failed, retrying')
 
-# class bluetoothThread (threading.Thread):
-# 	def __init__(self):
-# 		threading.Thread.__init__(self)
+class bluetoothThread (threading.Thread):
+	def __init__(self):
+		threading.Thread.__init__(self)
 
-# 	def run(self):
-# 		while(True):
-# 			try:
-# 				bluetooth.connect()
-# 				while(True):
-# 					logging.log(5,'receiving from bluetooth')
-# 					receive_string = bluetooth.receive()
-# 					while(receive_string == ''):
-# 						logging.log(5,'give up receiving from bluetooth')
-# 						time.sleep(0.5)
-# 						receive_string = bluetooth.receive()
-# 					logging.log(5,'receiving from bluetooth end')
+	def run(self):
+		while(True):
+			try:
+				bluetooth.connect()
+				while(True):
+					logging.log(5,'receiving from bluetooth')
+					receive_string = bluetooth.receive()
+					while(receive_string == ''):
+						logging.log(5,'give up receiving from bluetooth')
+						time.sleep(0.5)
+						receive_string = bluetooth.receive()
+					logging.log(5,'receiving from bluetooth end')
 
-# 					receiveDict = jsonpickle.decode(receive_string)
+					receiveDict = jsonpickle.decode(receive_string)
 
-# 					#put with blocking=True
-# 					incomingMessageQueue.put(receiveDict, True)
-# 			except bluetooth.BluetoothError:
-# 				logging.error('connecting to bluetooth failed, retrying')
-# 			except bluetooth.IOError:
-# 				logging.error('IOError occurred')
-# 			except ValueError as msg:
-# 				logging.error(msg)
+					#put with blocking=True
+					incomingMessageQueue.put(receiveDict, True)
+			except bluetooth.BluetoothError:
+				logging.error('connecting to bluetooth failed, retrying')
+			except bluetooth.IOError:
+				logging.error('IOError occurred')
+			except ValueError as msg:
+				logging.error(msg)
 
 class incomingMessageConsumerThread(threading.Thread):
 	def __init__(self):
@@ -192,14 +194,14 @@ class outgoingMessageConsumerThread(threading.Thread):
 
 wifiThread = wifiThread()
 arduinoThread = arduinoThread()
-# bluetoothThread = bluetoothThread()
+bluetoothThread = bluetoothThread()
 
 incomingMessageConsumerThread = incomingMessageConsumerThread()
 outgoingMessageConsumerThread = outgoingMessageConsumerThread()
 
 wifiThread.start()
 arduinoThread.start()
-# bluetoothThread.start()
+bluetoothThread.start()
 
 incomingMessageConsumerThread.start()
 outgoingMessageConsumerThread.start()

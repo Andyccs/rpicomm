@@ -28,20 +28,20 @@ class TestPiWifi(unittest.TestCase):
 		self.assertTrue(TestPiWifi.wifi.connected())
  
 	def test_send_data(self):
-		test_string = "test send data"
+		test_string = "{test send data}"
 		TestPiWifi.wifi.send(test_string)
 		time.sleep(2)
 
 		receive_string = TestPiWifi.wifiClient.recv(1024)
-		self.assertEqual("test send data",receive_string)
+		self.assertEqual("{test send data}",receive_string)
 
 	def test_receive_data(self):
-		test_string = "test receive data"
+		test_string = "{test receive data}"
 		TestPiWifi.wifiClient.send(test_string.encode('utf-8'))	
 
 		time.sleep(2)
 		receive_string = TestPiWifi.wifi.receive()
-		self.assertEqual("test receive data", receive_string)
+		self.assertEqual("{test receive data}", receive_string)
 
 
 	@classmethod
