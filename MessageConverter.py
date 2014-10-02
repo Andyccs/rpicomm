@@ -11,9 +11,9 @@ class PCToArduino:
 				outgoingMessage = '1'
 		elif incomingMessage['action']=='ROTATE' :
 			if incomingMessage['quantity'] > 0 : 
-				outgoingMessage = 'L'
-			elif incomingMessage['quantity'] < 0 :
 				outgoingMessage = 'R'
+			elif incomingMessage['quantity'] < 0 :
+				outgoingMessage = 'L'
 			else:
 				outgoingMessage = '0'
 		else:
