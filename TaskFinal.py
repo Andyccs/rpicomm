@@ -83,8 +83,11 @@ class bluetoothThread (threading.Thread):
 						receive_string = bluetooth.receive()
 					logging.log(5,'receiving from bluetooth end')
 
-					# here, I will receive only one character
-					messageDict = {"to":"arduino","message":receive_string}
+					# here, I will receive a dictionary
+					# format: {"message":"A"}
+					receiveDict = jsonpickle.decode(receive_string)
+
+					messageDict = {"to":"arduino","message":receiveDict['message']}
 
 					#put with blocking=True
 					incomingMessageQueue.put(messageDict, True)

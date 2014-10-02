@@ -39,10 +39,9 @@ class PiWifi:
 			self.socket.listen(10)
 			logging.debug('Socket Now Listening')
 
+			self.socket.setblocking(True)
 			(self.conn, self.addr) = self.socket.accept()
 			logging.info('Connected with:' + self.addr[0] + ':' + str(self.addr[1]) )
-
-			self.conn.setblocking(False)
 
 			self.isConnected = True
 		finally:
@@ -54,7 +53,8 @@ class PiWifi:
 		try:
 			if self.isConnected == False:
 				return
-				
+
+			self.conn.setblocking(True)
 			self.conn.close()
 			self.socket.close()
 			isConnected = False
@@ -73,9 +73,9 @@ class PiWifi:
 		self.mutex.acquire()
 		try:
 			if self.isConnected==False:
-				logging.warning('No connection, abort sending data')
+				logging.warning('No wifi connection, abort sending data')
 				return None
-
+			self.conn.setblocking(True)
 			data = str(data)
 			self.conn.send(data.encode('utf-8'))
 			logging.debug('Sending data: '+data)
@@ -88,7 +88,7 @@ class PiWifi:
 			if self.isConnected==False:
 				logging.warning('No connection, abort receiving data')
 				return None
-
+			self.conn.setblocking(False)
 			result = ""
 			data = self.conn.recv(1)
 			result += data
