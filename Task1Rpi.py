@@ -19,4 +19,5 @@ assert wifi.connected()
 
 while True:
 	receive_string = wifi.receive()
-	print receive_string
+	receiveDict = jsonpickle.decode(receive_string)
+	print receiveDict['message']
