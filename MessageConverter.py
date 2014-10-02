@@ -16,6 +16,8 @@ class PCToArduino:
 				outgoingMessage = 'L'
 			else:
 				outgoingMessage = '0'
+		elif incomingMessage['action']=='KELLY':
+			outgoingMessage = 'C'
 		else:
 			logging.debug('incoming message contains unknown action, sending move 0')
 			outgoingMessage = '0'
@@ -29,9 +31,9 @@ class ArduinoToPC:
 		status = information[0]
 		if(status=='1'):
 			status = 'TASK_FINISH'
+		information.pop(0)
+		sensors = ','.join(information)
 
-		sensors = ','.join(information.pop(0))
-
-		jsonString = '{"event":'+status+',"sensors":['+sensors+']}'
+		jsonString = '{"event":"'+status+'","sensors":['+sensors+']}'
 
 		return jsonString

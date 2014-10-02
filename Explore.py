@@ -12,9 +12,9 @@ import MessageModel as model
 import time
 from MessageConverter import PCToArduino, ArduinoToPC
 
-
 FORMAT = '%(asctime)-15s %(message)s'
 LEVEL = logging.DEBUG
+#LEVEL = 5
 logging.basicConfig(level=LEVEL,format=FORMAT)
 
 # elements in this queue are dictionary
@@ -75,12 +75,14 @@ class arduinoThread(threading.Thread):
 					logging.log(5,"Arduino thread receive: "+receive_string)
 					jsonString = ArduinoToPC.convert(receive_string)
 					logging.log(5,"Arduino thread converted to json: "+jsonString)
-
+					receiveDict = jsonpickle.decode(jsonString)
 					#put with blocking=True
-					incomingMessageQueue.put(jsonString, True)
+					incomingMessageQueue.put(receiveDict, True)
 
 			except serial.SerialException:
 				logging.error('connecting to arduino failed, retrying')
+			except Exception as msg:
+				logging.error(msg)
 
 class bluetoothThread (threading.Thread):
 	def __init__(self):
@@ -105,8 +107,8 @@ class bluetoothThread (threading.Thread):
 					incomingMessageQueue.put(receiveDict, True)
 			except bluetooth.BluetoothError:
 				logging.error('connecting to bluetooth failed, retrying')
-			except bluetooth.IOError:
-				logging.error('IOError occurred')
+			#except bluetooth.IOError:
+			#	logging.error('IOError occurred')
 			except ValueError as msg:
 				logging.error(msg)
 
@@ -187,8 +189,9 @@ class outgoingMessageConsumerThread(threading.Thread):
 
 				outgoingMessageQueue.task_done()
 			except BaseException as msg:
+				logging.error(msg)
+			except Exception as msg:
 				logging.error(msg)	
-
 
 
 ###################################################
