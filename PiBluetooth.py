@@ -16,8 +16,7 @@ class PiBlueTooth:
 		host = first_match["host"]
 		self.client_sock.connect((host,port))
 		self.isconnected = True
-
-
+		self.client_sock.setblocking(False)
 
 	def close(self):
 		self.client_sock.close()
@@ -30,8 +29,7 @@ class PiBlueTooth:
 			return None
 
 		try:	
-			#self.client_sock.setblocking(1)
-			self.client_sock.send(str(data),socket.MSG_WAITALL)
+			self.client_sock.send(str(data))
 			logging.info('Bluetooth sent data')
 		except IOError:
 			logging.error('Bluetooth exception')
@@ -42,8 +40,7 @@ class PiBlueTooth:
 			return None
 
 		try:	
-			#self.client_sock.setblocking(0)
-			data = self.client_sock.recv(1024,socket.MSG_DONTWAIT)
+			data = self.client_sock.recv(1024)
 			if len(data)!=0:
 				logging.info('Bluetooth received data')
 				return data
