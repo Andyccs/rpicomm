@@ -121,6 +121,7 @@ class incomingMessageConsumerThread(threading.Thread):
 				logging.debug('consuming incoming message: '+str(incomingMessage))
 
 				event = incomingMessage['event']
+				event = event.upper()
 				
 				# this event came from PC
 				# need to send appropriate string to arduino
