@@ -1,7 +1,8 @@
 from bluetooth import *
 import logging
+import threading
 
-class PiBlueTooth:
+class PiBluetooth:
 	def __init__(self):
 		self.UUID = "a1513d56-2b38-421d-bee3-4286f12f9866"
 		self.client_sock = BluetoothSocket ( RFCOMM )
