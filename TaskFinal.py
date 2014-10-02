@@ -110,7 +110,7 @@ class incomingMessageConsumerThread(threading.Thread):
 				
 				if to == 'arduino':
 					arduino.send(event['message'])
-				elif event == 'pc':
+				elif to == 'pc':
 					wifi.send(event['message'])
 
 				incomingMessageQueue.task_done()

@@ -1,7 +1,7 @@
 import socket
 
 wifiClient = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-wifiClient.connect(("192.168.14.144", 8080))
+wifiClient.connect(("192.168.14.144", 8000))
 wifiClient.send('{"message":"A"}')	
 
 

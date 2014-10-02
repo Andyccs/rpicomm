@@ -4,7 +4,7 @@ import time
 arduino = PiArduino.PiArduino()
 arduino.connect()
 time.sleep(2)
-arduino.send('B')
+arduino.send('A')
 temp = arduino.receive()
 while temp=='':
 	print 'Receive Nothing'

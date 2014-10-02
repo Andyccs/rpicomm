@@ -5,6 +5,7 @@ import PiWifi
 import thread
 import socket
 import logging
+import jsonpickle
 
 FORMAT = '%(asctime)-15s %(message)s'
 LEVEL = logging.DEBUG

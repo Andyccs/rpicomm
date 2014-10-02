@@ -1,5 +1,6 @@
 import PiWifi
 import logging
+import jsonpickle
 
 FORMAT = '%(asctime)-15s %(message)s'
 LEVEL = logging.DEBUG
@@ -10,5 +11,6 @@ bt = PiBluetooth.PiBluetooth()
 bt.connect()
 
 while True:
-        receive_string = bt.receive()
-        print receive_string
+	receive_string = bt.receive()
+	receiveDict = jsonpickle.decode(receive_string)
+	print receiveDict['message']
