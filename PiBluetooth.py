@@ -2,32 +2,22 @@ from bluetooth import *
 import logging
 
 class PiBlueTooth:
-	UUID = "a1513d56-2b38-421d-bee3-4286f12f9866"
-	ADDR = None
-
-	def __init__(self, address):
-		PiBlueTooth.ADDR = address
-
-		self.server_sock = BluetoothSocket(RFCOMM)
-		self.server_sock.bind(("",address))
-		self.server_sock.listen(10)
-
-		self.port = self.server_sock.getsockname()[1]
-
-		advertise_service( self.server_sock, "SampleServer",
-							service_id = self.UUID,
-							service_classes = [ self.UUID, SERIAL_PORT_CLASS ],
-							profiles = [ SERIAL_PORT_PROFILE ]
-						)
-
-		self.client_sock = None
-		self.client_info = None
-		self.isConnected = False
 
 	def connect(self):
-		self.client_sock, self.client_info = self.server_sock.accept()
-		self.isConnected = True
-		logging.info('Bluetooth accepted connection from '+ self.client_info)
+		UUID = "a1513d56-2b38-421d-bee3-4286f12f9866"
+		self.client_sock = BluetoothSocket ( RFCOMM )
+		btAdd = "08:60:6E:A5:88:E4"
+		print("finding service..")
+		service_match = find_service(uuid=UUID, address=btAdd)
+		while len(service_match) == 0:
+			service_match = find_service(uuid=UUID, address=btAdd)
+		first_match = service_match[0]
+		port = first_match["port"]
+		host = first_match["host"]
+		self.client_sock.connect((host,port))
+		self.isconnected = True
+
+
 
 	def close(self):
 		self.client_sock.close()
