@@ -12,5 +12,7 @@ bt.connect()
 
 while True:
 	receive_string = bt.receive()
+	while receive_string=='':
+		receive_string = bt.receive()
 	receiveDict = jsonpickle.decode(receive_string)
 	print receiveDict['message']
