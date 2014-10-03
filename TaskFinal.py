@@ -12,7 +12,7 @@ import serial
 import bluetooth
 import MessageModel as model
 import time
-
+import jsonpickle
 
 FORMAT = '%(asctime)-15s %(message)s'
 LEVEL = logging.DEBUG
@@ -91,8 +91,6 @@ class bluetoothThread (threading.Thread):
 
 					#put with blocking=True
 					incomingMessageQueue.put(messageDict, True)
-			except bluetooth.BluetoothError:
-				logging.error('connecting to bluetooth failed, retrying')
 			except ValueError as msg:
 				logging.error(msg)
 
@@ -108,10 +106,10 @@ class incomingMessageConsumerThread(threading.Thread):
 
 				event = incomingMessage['to']
 				
-				if to == 'arduino':
-					arduino.send(event['message'])
-				elif to == 'pc':
-					wifi.send(event['message'])
+				if event == 'arduino':
+					arduino.send(incomingMessage['message'])
+				elif event == 'pc':
+					wifi.send(incomingMessage['message'])
 
 				incomingMessageQueue.task_done()
 			except BaseException as msg:

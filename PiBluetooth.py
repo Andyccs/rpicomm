@@ -70,7 +70,7 @@ class PiBluetooth:
 			logging.info('Bluetooth received data: '+result)
 			return result
 		except IOError:
-			logging.error('Bluetooth non-blocking receive')
+			logging.log(5,'Bluetooth non-blocking receive')
 			return ''
 		finally:
 			self.mutex.release()
