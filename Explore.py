@@ -75,12 +75,15 @@ class arduinoThread(threading.Thread):
 					logging.log(5,"Arduino thread receive: "+receive_string)
 					jsonString = ArduinoToPC.convert(receive_string)
 					logging.log(5,"Arduino thread converted to json: "+jsonString)
+					receiveDict = jsonpickle.decode(jsonString)
 
 					#put with blocking=True
-					incomingMessageQueue.put(jsonString, True)
+					incomingMessageQueue.put(receiveDict, True)
 
 			except serial.SerialException:
 				logging.error('connecting to arduino failed, retrying')
+			except Exception as msg:
+				logging.error(msg)
 
 class bluetoothThread (threading.Thread):
 	def __init__(self):

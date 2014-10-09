@@ -15,7 +15,7 @@ class PiArduino:
         try:
             #timeout=0 for non-blocking read
             #since no writetimeout is specified, write is blocking
-            self.ser = serial.Serial('/dev/ttyACM0', 9600,timeout=0) #ttyACM1
+            self.ser = serial.Serial('/dev/ttyACM0', 9600,timeout=1) #ttyACM1
             self.isConnected = True
             logging.info('Arduino Connected')
         finally:
@@ -42,6 +42,7 @@ class PiArduino:
         self.mutex.acquire()
         try:
             sensor = self.ser.readline().rstrip()
+
             logging.debug('Arduino Received: '+str(sensor))
             return sensor
         finally:

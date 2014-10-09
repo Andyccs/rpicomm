@@ -29,9 +29,9 @@ class ArduinoToPC:
 		status = information[0]
 		if(status=='1'):
 			status = 'TASK_FINISH'
+		information.pop(0)
+		sensors = ','.join(information)
 
-		sensors = ','.join(information.pop(0))
-
-		jsonString = '{"event":'+status+',"sensors":['+sensors+']}'
+		jsonString = '{"event":"'+status+'","sensors":['+sensors+']}'
 
 		return jsonString
