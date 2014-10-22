@@ -24,7 +24,7 @@ outgoingMessageQueue = Queue.Queue()
 
 wifi = PiWifi.PiWifi("192.168.14.144",8080)
 arduino = PiArduino.PiArduino()
-bluetooth = PiBluetooth.PiBluetooth()
+android = PiBluetooth.PiBluetooth()
 
 ########################################################33
 class wifiThread (threading.Thread):
@@ -84,22 +84,22 @@ class arduinoThread(threading.Thread):
 			except Exception as msg:
 				logging.error(msg)
 
-class bluetoothThread (threading.Thread):
+class androidThread (threading.Thread):
 	def __init__(self):
 		threading.Thread.__init__(self)
 
 	def run(self):
 		while(True):
 			try:
-				bluetooth.connect()
+				android.connect()
 				while(True):
-					logging.log(5,'receiving from bluetooth')
-					receive_string = bluetooth.receive()
+					logging.log(5,'receiving from android')
+					receive_string = android.receive()
 					while(receive_string == ''):
-						logging.log(5,'give up receiving from bluetooth')
+						logging.log(5,'give up receiving from android')
 						time.sleep(0.5)
-						receive_string = bluetooth.receive()
-					logging.log(5,'receiving from bluetooth end')
+						receive_string = android.receive()
+					logging.log(5,'receiving from android end')
 
 					receiveDict = jsonpickle.decode(receive_string)
 
@@ -107,10 +107,7 @@ class bluetoothThread (threading.Thread):
 					incomingMessageQueue.put(receiveDict, True)
 
 			except bluetooth.BluetoothError:
-				logging.error('connecting to bluetooth failed, retrying')
-			#except bluetooth.IOError:
-			#	logging.error('IOError occurred')
-
+				logging.error('connecting to android failed, retrying')
 			except ValueError as msg:
 				logging.error(msg)
 			except Exception as msg:
@@ -183,7 +180,7 @@ class outgoingMessageConsumerThread(threading.Thread):
 					logging.log(5,'after sending to pc through wifi')
 				elif outgoingMessage.to == model.OutGoing.ANDROID :
 					logging.log(5,'sending to android through bluetooth')
-					bluetooth.send(outgoingMessage.message)
+					android.send(outgoingMessage.message)
 					logging.log(5,'after sending to android through bluetooth')
 				elif outgoingMessage.to == model.OutGoing.ARDUINO :
 					logging.log(5,'sending to arduino through serial')
@@ -202,14 +199,14 @@ class outgoingMessageConsumerThread(threading.Thread):
 
 wifiThread = wifiThread()
 arduinoThread = arduinoThread()
-bluetoothThread = bluetoothThread()
+androidThread = androidThread()
 
 incomingMessageConsumerThread = incomingMessageConsumerThread()
 outgoingMessageConsumerThread = outgoingMessageConsumerThread()
 
 wifiThread.start()
 arduinoThread.start()
-bluetoothThread.start()
+androidThread.start()
 
 incomingMessageConsumerThread.start()
 outgoingMessageConsumerThread.start()
