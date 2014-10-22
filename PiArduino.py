@@ -42,6 +42,7 @@ class PiArduino:
         self.mutex.acquire()
         try:
             sensor = self.ser.readline().rstrip()
+
             logging.debug('Arduino Received: '+str(sensor))
             return sensor
         finally:

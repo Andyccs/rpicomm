@@ -105,11 +105,15 @@ class bluetoothThread (threading.Thread):
 
 					#put with blocking=True
 					incomingMessageQueue.put(receiveDict, True)
+
 			except bluetooth.BluetoothError:
 				logging.error('connecting to bluetooth failed, retrying')
 			#except bluetooth.IOError:
 			#	logging.error('IOError occurred')
+
 			except ValueError as msg:
+				logging.error(msg)
+			except Exception as msg:
 				logging.error(msg)
 
 class incomingMessageConsumerThread(threading.Thread):

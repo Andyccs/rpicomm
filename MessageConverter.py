@@ -35,5 +35,4 @@ class ArduinoToPC:
 		sensors = ','.join(information)
 
 		jsonString = '{"event":"'+status+'","sensors":['+sensors+']}'
-
 		return jsonString
