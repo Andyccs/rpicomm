@@ -7,8 +7,25 @@ class PCToArduino:
 		if incomingMessage['action']=='GO' :
 			if incomingMessage['quantity']<=0 :
 				outgoingMessage = '0'
-			else:
+			elif incomingMessage['quantity']==1:
 				outgoingMessage = '1'
+			elif incomingMessage['quantity']==2:
+				outgoingMessage = '2'
+			elif incomingMessage['quantity']==3:
+				outgoingMessage = '3'
+			elif incomingMessage['quantity']==4:
+				outgoingMessage = '4'	
+			elif incomingMessage['quantity']==5:
+				outgoingMessage = '5'
+			elif incomingMessage['quantity']==6:
+				outgoingMessage = '6'
+			elif incomingMessage['quantity']==7:
+				outgoingMessage = '7'
+			elif incomingMessage['quantity']==8:
+				outgoingMessage = '8'	
+			elif incomingMessage['quantity']==9:
+				outgoingMessage = '9'
+
 		elif incomingMessage['action']=='ROTATE' :
 			if incomingMessage['quantity'] > 0 : 
 				outgoingMessage = 'R'
