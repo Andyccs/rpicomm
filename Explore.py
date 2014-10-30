@@ -24,7 +24,7 @@ outgoingMessageQueue = Queue.Queue()
 
 wifi = PiWifi.PiWifi("192.168.14.144",8080)
 arduino = PiArduino.PiArduino()
-android = PiBluetooth.PiBluetooth()
+# android = PiBluetooth.PiBluetooth()
 
 ########################################################33
 class wifiThread (threading.Thread):
@@ -180,7 +180,7 @@ class outgoingMessageConsumerThread(threading.Thread):
 					logging.log(5,'after sending to pc through wifi')
 				elif outgoingMessage.to == model.OutGoing.ANDROID :
 					logging.log(5,'sending to android through bluetooth')
-					android.send(outgoingMessage.message)
+					# android.send(outgoingMessage.message)
 					logging.log(5,'after sending to android through bluetooth')
 				elif outgoingMessage.to == model.OutGoing.ARDUINO :
 					logging.log(5,'sending to arduino through serial')
@@ -199,14 +199,14 @@ class outgoingMessageConsumerThread(threading.Thread):
 
 wifiThread = wifiThread()
 arduinoThread = arduinoThread()
-androidThread = androidThread()
+# androidThread = androidThread()
 
 incomingMessageConsumerThread = incomingMessageConsumerThread()
 outgoingMessageConsumerThread = outgoingMessageConsumerThread()
 
 wifiThread.start()
 arduinoThread.start()
-androidThread.start()
+# androidThread.start()
 
 incomingMessageConsumerThread.start()
 outgoingMessageConsumerThread.start()
