@@ -1,7 +1,6 @@
 import socket
 import sys
 import logging
-import threading
 
 class PiWifi:
 
@@ -20,86 +19,59 @@ class PiWifi:
 		self.conn = None
 		self.address = None
 
-		self.mutex = threading.Lock()
-
-
 	def connect(self):
 		self.mutex.acquire()
+		if self.isConnected == True:
+			return
+
 		try:
-			if self.isConnected == True:
-				return
+			self.socket.bind((self.host, self.port))
+			logging.debug('Socket Bind complete')
+		except socket.error as msg:
+			logging.error('Bind failed, Error Code: ' + str(msg[0]) + ', Message: ' + msg[1])
+			raise socket.error()
 
-			try:
-				self.socket.bind((self.host, self.port))
-				logging.debug('Socket Bind complete')
-			except socket.error as msg:
-				logging.error('Bind failed, Error Code: ' + str(msg[0]) + ', Message: ' + msg[1])
-				raise socket.error()
+		self.socket.listen(10)
+		logging.debug('Socket Now Listening')
 
-			self.socket.listen(10)
-			logging.debug('Socket Now Listening')
+		self.socket.setblocking(True)
+		(self.conn, self.addr) = self.socket.accept()
+		logging.info('Connected with:' + self.addr[0] + ':' + str(self.addr[1]) )
 
-			self.socket.setblocking(True)
-			(self.conn, self.addr) = self.socket.accept()
-			logging.info('Connected with:' + self.addr[0] + ':' + str(self.addr[1]) )
-
-			self.isConnected = True
-		finally:
-			self.mutex.release()
+		self.isConnected = True
 
 	def close(self):
-		self.mutex.acquire()
+		if self.isConnected == False:
+			return
 
-		try:
-			if self.isConnected == False:
-				return
-
-			self.conn.setblocking(True)
-			self.conn.close()
-			self.socket.close()
-			isConnected = False
-			logging.info('Disconnected')
-		finally:
-			self.mutex.release()
+		self.conn.close()
+		self.socket.close()
+		isConnected = False
+		logging.info('Disconnected')
 
 	def connected(self):
-		self.mutex.acquire()
-		try:
-			return self.isConnected
-		finally:
-			self.mutex.release()
+		return self.isConnected
 
 	def send(self, data):
-		self.mutex.acquire()
-		try:
-			if self.isConnected==False:
-				logging.warning('No wifi connection, abort sending data')
-				return None
-			self.conn.setblocking(True)
-			data = str(data)
-			self.conn.send(data.encode('utf-8'))
-			logging.debug('Sending data: '+data)
-		finally:
-			self.mutex.release()
+		if self.isConnected==False:
+			logging.warning('No wifi connection, abort sending data')
+			return None
+
+		data = str(data)
+		self.conn.send(data.encode('utf-8'))
+		logging.debug('Sending data: '+data)
 
 	def receive(self):
-		self.mutex.acquire()
-		try:
-			if self.isConnected==False:
-				logging.warning('No connection, abort receiving data')
-				return None
-			self.conn.setblocking(False)
-			result = ""
+		if self.isConnected==False:
+			logging.warning('No connection, abort receiving data')
+			return None
+
+		result = ""
+		data = self.conn.recv(1)
+		result += data
+		while(data!='}'):
 			data = self.conn.recv(1)
 			result += data
-			while(data!='}'):
-				data = self.conn.recv(1)
-				result += data
 
-			logging.debug('Receiving data: '+result)
-			return result.decode('utf-8')
-		except socket.error as msg:
-			logging.log(5,'Non-blocking receive')
-			return ''
-		finally:
-			self.mutex.release()
+		logging.debug('Receiving data: '+result)
+		return result.decode('utf-8')

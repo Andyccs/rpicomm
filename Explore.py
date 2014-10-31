@@ -26,6 +26,8 @@ wifi = PiWifi.PiWifi("192.168.14.144",8080)
 arduino = PiArduino.PiArduino()
 # android = PiBluetooth.PiBluetooth()
 
+sleepTime = 0.1
+
 ########################################################33
 class wifiThread (threading.Thread):
 	def __init__(self):
@@ -38,11 +40,10 @@ class wifiThread (threading.Thread):
 				while(True):
 					logging.log(5,'receiving from wifi')
 					
-
 					receive_string = wifi.receive()
 					while(receive_string == ''):
 						logging.log(5,'give up receiving from wifi')
-						time.sleep(0.5)
+						time.sleep(sleepTime)
 						receive_string = wifi.receive()
 					logging.log(5,'receiving from wifi end')
 
@@ -68,7 +69,7 @@ class arduinoThread(threading.Thread):
 					receive_string = arduino.receive()
 					while(receive_string == ''):
 						logging.log(5,'give up receiving from arduino')
-						time.sleep(0.5)
+						time.sleep(sleepTime)
 						receive_string = arduino.receive()
 					logging.log(5,'receiving from arduino end')
 
@@ -97,7 +98,7 @@ class androidThread (threading.Thread):
 					receive_string = android.receive()
 					while(receive_string == ''):
 						logging.log(5,'give up receiving from android')
-						time.sleep(0.5)
+						time.sleep(sleepTime)
 						receive_string = android.receive()
 					logging.log(5,'receiving from android end')
 
