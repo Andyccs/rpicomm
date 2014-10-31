@@ -25,7 +25,7 @@ class PiWifi:
 
 		try:
 			self.socket.bind((self.host, self.port))
-			logging.debug('Socket Bind complete')
+			logging.log(5, 'Socket Bind complete')
 		except socket.error as msg:
 			logging.error('Bind failed, Error Code: ' + str(msg[0]) + ', Message: ' + msg[1])
 			raise socket.error()
@@ -72,5 +72,5 @@ class PiWifi:
 			data = self.conn.recv(1)
 			result += data
 
-		logging.debug('Receiving data: '+result)
+		logging.log(5, 'Receiving data: '+result)
 		return result.decode('utf-8')

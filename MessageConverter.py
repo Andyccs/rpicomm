@@ -38,8 +38,7 @@ class PCToArduino:
 		else:
 			logging.debug('incoming message contains unknown action, sending move 0')
 			outgoingMessage = '0'
-		m = model.OutGoing(model.OutGoing.ARDUINO, outgoingMessage)
-		return m
+		return outgoingMessage
 
 class ArduinoToPC:
 	@staticmethod
