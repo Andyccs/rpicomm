@@ -23,7 +23,7 @@ while(True):
 		while(True):
 			receive_string = wifi.receive()
 			receiveDict = jsonpickle.decode(receive_string)
-			logging.debug('wifi message: '+str(incomingMessage))
+			logging.debug('wifi message: '+str(receiveDict))
 
 			event = receiveDict['event']
 			event = event.upper()
@@ -36,7 +36,6 @@ while(True):
 			# R: Turn right
 			if event == 'ACTION':
 				logging.debug('sended wifi message to arduino');
-				incomingMessage
 				arduino.send(PCToArduino.convert(receiveDict))
 				receive_string = arduino.receive()
 				logging.debug("Arduino receive: "+receive_string)
