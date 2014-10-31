@@ -20,7 +20,6 @@ class PiWifi:
 		self.address = None
 
 	def connect(self):
-		self.mutex.acquire()
 		if self.isConnected == True:
 			return
 
