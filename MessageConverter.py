@@ -35,6 +35,11 @@ class PCToArduino:
 				outgoingMessage = '0'
 		elif incomingMessage['action']=='KELLY':
 			outgoingMessage = 'C'
+		elif incomingMessage['action']=='DIRECT':
+			outgoingMessage = incomingMessage['content']
+		elif incomingMessage['action']=='INIT':
+			outgoingMessage = 'I'
+
 		else:
 			logging.debug('incoming message contains unknown action, sending move 0')
 			outgoingMessage = '0'
