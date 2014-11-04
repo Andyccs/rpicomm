@@ -29,5 +29,6 @@ class PiArduino:
         return sensor
 
     def send(self,command):
-        self.ser.write(command)
+        for c in command:
+            self.ser.write(c)
         logging.debug('Arduino Sent: '+str(command))

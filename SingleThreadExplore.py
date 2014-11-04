@@ -38,11 +38,15 @@ while(True):
 				logging.debug('sended wifi message to arduino');
 				arduino.send(PCToArduino.convert(receiveDict))
 				receive_string = arduino.receive()
-				logging.debug("Arduino receive: "+receive_string)
-				jsonString = ArduinoToPC.convert(receive_string)
 
+				logging.debug("Arduino receive: "+receive_string)
 				logging.debug('sended arduino message to wifi');
-				wifi.send(jsonString)
+
+				if(receiveDict['action'] !='INIT' and receiveDict['action']!= 'DIRECT'):
+					jsonString = ArduinoToPC.convert(receive_string)
+					wifi.send(jsonString)
+				else:
+					wifi.send('{"event":"MSG","content":"'+receive_string+'"}')
 
 			# these events are came from ANDROID to PC, then to Rpi
 			# just forward original message to PC

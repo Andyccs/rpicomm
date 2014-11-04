@@ -1,4 +1,5 @@
 import MessageModel as model
+import logging
 
 class PCToArduino:
 	@staticmethod
